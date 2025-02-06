@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Github, Award, ExternalLink } from "lucide-react";
+import Image from "next/image";
 import HeroSection from "./heroSection";
 type SectionVisibility = {
   hero: boolean;
@@ -246,18 +247,23 @@ export default function Page() {
         <h2 className="text-3xl font-bold mb-8 text-white">
           Featured Projects
         </h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <div
               key={index}
               className="glassmorphism rounded-lg overflow-hidden transition-all duration-300 hover:scale-105"
             >
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-48 object-contain"
-              />
+              <div className="relative w-full h-48">
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  layout="responsive"
+                  width={500}
+                  height={300}
+                  className="object-contain"
+                />
+              </div>
+
               <div className="p-6">
                 <h3 className="text-xl font-bold text-blue-400 mb-2">
                   {project.title}
