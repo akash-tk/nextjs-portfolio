@@ -81,10 +81,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className="relative text-white font-sans">
-        <canvas
+       <canvas
           ref={canvasRef}
-          className="fixed top-0 left-0 w-full -z-10"
-          style={{ height: "100%" }}
+          className="fixed top-0 left-0 w-full -z-10 bg-black"
+          style={{ height: "100%", backgroundColor: "black" }}
         ></canvas>
 
         <div className="min-h-screen flex flex-col items-center">
