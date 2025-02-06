@@ -37,7 +37,7 @@ const TypewriterText: React.FC = () => {
     };
 
     typeWriter();
-  }, [wordIndex]);
+  }, [wordIndex]); // If you still get warnings, disable this ESLint rule
 
   return (
     <span className="text-blue-400">
@@ -72,12 +72,12 @@ const HeroSection: React.FC = () => {
       >
         <h1 className="text-4xl md:text-6xl font-extrabold">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
-            Hi, I'm Akash T K
+            Hi, I&apos;m Akash T K
           </span>
         </h1>
 
         <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
-          I'm a <TypewriterText />
+          I&apos;m a <TypewriterText />
         </h2>
 
         <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
