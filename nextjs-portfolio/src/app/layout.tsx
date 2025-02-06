@@ -142,11 +142,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             ></div>
 
             <div
-              className={`fixed top-0 left-0 h-full w-64 bg-black shadow-lg transition-transform duration-300 ${
+              className={`fixed top-0 left-0 h-full w-64 backdrop-blur-lg bg-white/10 border border-white/20 rounded-r-lg shadow-lg transition-transform duration-300 ${
                 menuOpen ? "translate-x-0" : "-translate-x-full"
               }`}
             >
-              <div className="p-6 flex flex-col space-y-6">
+              <div className="p-6 flex flex-col space-y-6 text-white">
                 <a
                   href="#about"
                   onClick={() => setMenuOpen(false)}
