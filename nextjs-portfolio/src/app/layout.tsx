@@ -88,8 +88,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         ></canvas>
 
         <div className="min-h-screen flex flex-col items-center">
-          <header className="w-full max-w-4xl p-6 transition-all duration-300">
-            <nav className="flex items-center justify-between relative">
+          <header className="fixed top-0 w-full bg-black border-b border-white/20 z-50">
+            <nav className="max-w-4xl mx-auto p-6 flex items-center justify-between">
               <button
                 onClick={() => setMenuOpen(true)}
                 className="md:hidden text-white"
@@ -186,7 +186,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          <main className="flex-1 w-full max-w-4xl p-6">{children}</main>
+          <main className="flex-1 w-full max-w-4xl p-6 mt-20">{children}</main>
 
           <footer className="w-full p-6 text-center text-sm text-gray-400">
             © 2025 Akash T K. All rights reserved.
