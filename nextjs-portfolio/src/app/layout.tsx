@@ -151,8 +151,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         className="relative text-white font-sans"
         style={{ overscrollBehavior: "none", touchAction: "manipulation" }}
       > */}
-      // <body className="relative text-white font-sans">
-       <canvas
+  
+       {/*     <body className="relative text-white font-sans"> */}
+       
+  <canvas
           ref={canvasRef}
           className="fixed top-0 left-0 w-full -z-10 bg-black"
           style={{ height: "100%", backgroundColor: "black" }}
