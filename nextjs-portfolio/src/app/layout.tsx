@@ -140,19 +140,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <html lang="en" className="dark" style={{ height: "100%", overflow: "hidden" }}>
-  <body
-    className="relative text-white font-sans"
-    style={{ minHeight: "100vh", backgroundColor: "black" }}
-  >
 
-{/*     <html lang="en" className="dark"> */}
-{/*       <body
-        className="relative text-white font-sans"
-        style={{ overscrollBehavior: "none", touchAction: "manipulation" }}
-      > */}
+<html lang="en" className="dark">
   
-       {/*     <body className="relative text-white font-sans"> */}
+  <body className="relative text-white font-sans">
        
   <canvas
           ref={canvasRef}
