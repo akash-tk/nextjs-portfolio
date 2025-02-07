@@ -146,7 +146,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     style={{ minHeight: "100vh", backgroundColor: "black" }}
   >
 
-    // <html lang="en" className="dark">
+{/*     <html lang="en" className="dark"> */}
 {/*       <body
         className="relative text-white font-sans"
         style={{ overscrollBehavior: "none", touchAction: "manipulation" }}
