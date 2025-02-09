@@ -7,8 +7,9 @@ import * as THREE from "three";
 export default function Layout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [canvasLoaded, setCanvasLoaded] = useState(false);
 
-  // Handle menu toggle and prevent background scrolling
+  // Prevent scrolling when menu is open
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
     if (!menuOpen) {
@@ -17,6 +18,14 @@ export default function Layout({ children }: { children: ReactNode }) {
       document.body.classList.remove("menu-open");
     }
   };
+
+  useEffect(() => {
+    // Ensure scroll position is at top on page load
+    window.scrollTo(0, 0);
+
+    // Delay canvas rendering slightly to prevent flickering
+    setTimeout(() => setCanvasLoaded(true), 200);
+  }, []);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -84,11 +93,13 @@ export default function Layout({ children }: { children: ReactNode }) {
     <html lang="en" className="dark">
       <body className={`relative text-white font-sans ${menuOpen ? "overflow-hidden" : ""}`}>
 
-        {/* Background Canvas */}
-        <canvas
-          ref={canvasRef}
-          className="fixed top-0 left-0 w-screen h-screen -z-10 bg-black"
-        />
+        {/* Background Canvas (renders after delay to avoid flicker) */}
+        {canvasLoaded && (
+          <canvas
+            ref={canvasRef}
+            className="fixed top-0 left-0 w-screen h-screen -z-10 bg-black will-change-transform"
+          />
+        )}
 
         <div className="min-h-screen flex flex-col items-center">
           {/* Header */}
