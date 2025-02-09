@@ -7,29 +7,20 @@ import * as THREE from "three";
 export default function Layout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [canvasLoaded, setCanvasLoaded] = useState(false);
 
   // Prevent scrolling when menu is open
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-    if (!menuOpen) {
-      document.body.classList.add("menu-open");
-    } else {
-      document.body.classList.remove("menu-open");
-    }
+    document.body.classList.toggle("overflow-hidden", menuOpen);
   };
 
   useEffect(() => {
-    // Ensure scroll position is at top on page load
+    // Ensure scroll position is at the top on page load
     window.scrollTo(0, 0);
 
-    // Delay canvas rendering slightly to prevent flickering
-    setTimeout(() => setCanvasLoaded(true), 200);
-  }, []);
-
-  useEffect(() => {
     if (!canvasRef.current) return;
 
+    // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -47,6 +38,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 1);
 
+    // Starfield Animation
     const starGeometry = new THREE.BufferGeometry();
     const starsMaterial = new THREE.PointsMaterial({
       color: 0xffffff,
@@ -69,6 +61,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     const stars = new THREE.Points(starGeometry, starsMaterial);
     scene.add(stars);
 
+    // Animation Loop
     const animate = () => {
       requestAnimationFrame(animate);
       stars.rotation.y += 0.0001;
@@ -77,6 +70,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     };
     animate();
 
+    // Handle Window Resize
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -91,15 +85,12 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className="dark">
-      <body className={`relative text-white font-sans ${menuOpen ? "overflow-hidden" : ""}`}>
-
-        {/* Background Canvas (renders after delay to avoid flicker) */}
-        {canvasLoaded && (
-          <canvas
-            ref={canvasRef}
-            className="fixed top-0 left-0 w-screen h-screen -z-10 bg-black will-change-transform"
-          />
-        )}
+      <body className="relative text-white font-sans bg-black">
+        {/* Background Canvas (always rendered for animation) */}
+        <canvas
+          ref={canvasRef}
+          className="fixed top-0 left-0 w-screen h-screen -z-10 bg-black will-change-transform"
+        />
 
         <div className="min-h-screen flex flex-col items-center">
           {/* Header */}
