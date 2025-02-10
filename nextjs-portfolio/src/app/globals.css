@@ -4,25 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Prevent Scroll Issues */
-html, body {
-  background: linear-gradient(135deg, #1e293b, #0f172a) !important;
-  color: #e2e8f0;
-  overscroll-behavior: none;
-  overflow-x: hidden;
-  min-height: 100vh;
-  touch-action: none;
+body {
   font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #e2e8f0;
 }
 
-/* Glassmorphism Effect */
 .glassmorphism {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Heading Fonts */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: "Playfair Display", serif;
 }
