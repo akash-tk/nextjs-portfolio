@@ -25,8 +25,17 @@ export default function Layout({ children }: { children: ReactNode }) {
       alpha: true,
       antialias: true,
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 1);
+    
+    // Update renderer sizing logic
+    const updateSize = () => {
+      const container = document.documentElement;
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+    };
+    
+    updateSize();
 
     const starGeometry = new THREE.BufferGeometry();
     const starsMaterial = new THREE.PointsMaterial({
@@ -59,14 +68,15 @@ export default function Layout({ children }: { children: ReactNode }) {
     animate();
 
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      updateSize();
     };
+    
     window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
@@ -84,15 +94,22 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className="dark">
-      <body className="relative text-white font-sans">
+      <body className="relative min-h-screen w-full overflow-x-hidden bg-[#0f172a]">
         <canvas
           ref={canvasRef}
-          className="fixed top-0 left-0 w-full -z-10 bg-black"
-          style={{ height: "100%", backgroundColor: "black" }}
-        ></canvas>
+          className="fixed inset-0 w-full h-full pointer-events-none"
+          style={{ 
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
+          }}
+        />
 
-        <div className="min-h-screen flex flex-col items-center">
-          <header className="fixed top-0 w-full bg-black border-b border-white/20 z-50">
+        <div className="relative flex min-h-screen flex-col">
+          <header className="sticky top-0 w-full bg-black/80 backdrop-blur-sm border-b border-white/20 z-50">
             <nav className="max-w-4xl mx-auto p-6 flex items-center justify-between">
               <button
                 onClick={() => setMenuOpen(true)}
@@ -117,10 +134,10 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div
               className={`fixed inset-0 bg-black bg-opacity-60 transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0"}`}
               onClick={() => setMenuOpen(false)}
-            ></div>
+            />
 
             <div
-              className={`fixed top-0 left-0 h-full w-64 backdrop-blur-lg bg-white/10 border border-white/20 rounded-r-lg shadow-lg transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+              className={`fixed top-0 left-0 h-full w-64 backdrop-blur-lg bg-white/10 border-r border-white/20 shadow-lg transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
               <div className="p-6 flex flex-col space-y-6 text-white">
                 <a href="#about" onClick={() => setMenuOpen(false)} className="hover:text-gray-400">About</a>
@@ -132,7 +149,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          <main className="flex-1 w-full max-w-4xl p-6 mt-20">{children}</main>
+          <main className="flex-1 w-full max-w-4xl mx-auto p-6 mt-20">{children}</main>
 
           <footer className="w-full p-6 text-center text-sm text-gray-400">
             © 2025 Akash T K. All rights reserved.
