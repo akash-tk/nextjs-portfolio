@@ -4,15 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  background-color: #03020d; /* Same as your gradient start color */
-  min-height: 100%;
-}
-
 body {
   font-family: "Inter", sans-serif;
-/*   background: transparent; */
-/*   background: #000000; */
+   background: #03020d;
 /*   background: linear-gradient(135deg, #1e293b, #0f172a); */
   color: #e2e8f0;
 }
