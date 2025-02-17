@@ -94,7 +94,11 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className="dark">
-      <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#03020d] via-[#120f22] to-[#0d0d14]">
+
+      <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#0c0d14] via-[#0a0a0f] to-[#0d0e14]">
+
+      
+{/*       <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#03020d] via-[#120f22] to-[#0d0d14]"> */}
 
 {/*       <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#1e1e2f] via-[#2a2a47] to-[#1c1c3c]"> */}
         
