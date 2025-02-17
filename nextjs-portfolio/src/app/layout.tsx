@@ -109,7 +109,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
 
         <div className="relative flex min-h-screen flex-col">
-          <header className="sticky top-0 w-full bg-black/80 backdrop-blur-sm border-b border-white/20 z-50">
+          <header className="sticky top-0 w-full bg-[#0f172a]/80 backdrop-blur-sm border-b border-white/20 z-50">
             <nav className="max-w-4xl mx-auto p-6 flex items-center justify-between">
               <button
                 onClick={() => setMenuOpen(true)}
