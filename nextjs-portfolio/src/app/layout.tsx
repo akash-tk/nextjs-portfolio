@@ -1,9 +1,3 @@
-"use client";
-import "./globals.css";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { Bars3Icon } from "@heroicons/react/24/outline";
-import * as THREE from "three";
-
 export default function Layout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +20,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       antialias: true,
     });
     
-    // Update renderer sizing logic
     const updateSize = () => {
       const container = document.documentElement;
       renderer.setSize(container.clientWidth, container.clientHeight);
@@ -94,7 +87,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className="dark">
-      <body className="relative min-h-screen w-full overflow-x-hidden bg-[#0f172a]">
+      <body className="relative min-h-screen w-full overflow-x-hidden bg-[#111827]"> {/* Updated background */}
         <canvas
           ref={canvasRef}
           className="fixed inset-0 w-full h-full pointer-events-none"
@@ -109,7 +102,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
 
         <div className="relative flex min-h-screen flex-col">
-          <header className="sticky top-0 w-full bg-black/80 backdrop-blur-sm border-b border-white/20 z-50">
+          <header className="sticky top-0 w-full bg-[#111827] backdrop-blur-sm border-b border-white/20 z-50"> {/* Matching navbar color */}
             <nav className="max-w-4xl mx-auto p-6 flex items-center justify-between">
               <button
                 onClick={() => setMenuOpen(true)}
