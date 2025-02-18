@@ -213,6 +213,7 @@ export default function Page() {
         });
       },
       { threshold: 0.2 }
+      rootMargin: '50px 0px'
     );
 
     const sections = document.querySelectorAll(".section-fade");
