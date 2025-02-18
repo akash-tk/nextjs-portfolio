@@ -22,3 +22,9 @@ h2,
 h3 {
   font-family: "Playfair Display", serif;
 }
+
+/* In globals.css */
+.section-fade {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
