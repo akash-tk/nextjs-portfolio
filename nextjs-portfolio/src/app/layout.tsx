@@ -9,22 +9,26 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Prevent flash by controlling visibility
   useEffect(() => {
+    console.log("First useEffect: Setting loaded");
     document.documentElement.style.backgroundColor = "#03020d";
     document.body.style.backgroundColor = "#03020d";
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark');
     }
-    setLoaded(true); // Set loaded after initial setup
+    setLoaded(true);
   }, []);
 
-  // Three.js animation setup
   useEffect(() => {
-    if (!canvasRef.current) return;
     const canvas = canvasRef.current;
+    if (!canvas) {
+      console.log("No canvas element found");
+      return;
+    }
 
-    const initTimer = setTimeout(() => {
+    let animationFrameId: number;
+    const initThreeJS = () => {
+      console.log("Initializing Three.js");
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
         75,
@@ -35,18 +39,20 @@ export default function Layout({ children }: { children: ReactNode }) {
       camera.position.z = 5;
 
       const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
+        canvas,
         alpha: true,
         antialias: true,
       });
       renderer.setClearColor(new THREE.Color("#03020d"), 1);
 
       const updateSize = () => {
-        if (!canvasRef.current) return;
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
+        console.log("Renderer resized:", width, height);
       };
       updateSize();
 
@@ -72,7 +78,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       const stars = new THREE.Points(starGeometry, starsMaterial);
       scene.add(stars);
 
-      let animationFrameId: number;
       const animate = () => {
         animationFrameId = requestAnimationFrame(animate);
         stars.rotation.y += 0.0001;
@@ -83,22 +88,33 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       const handleResize = () => updateSize();
       window.addEventListener("resize", handleResize);
-      window.addEventListener("orientationchange", handleResize);
-      window.addEventListener("deviceorientation", handleResize);
 
       return () => {
         window.removeEventListener("resize", handleResize);
-        window.removeEventListener("orientationchange", handleResize);
-        window.removeEventListener("deviceorientation", handleResize);
         cancelAnimationFrame(animationFrameId);
         starGeometry.dispose();
         starsMaterial.dispose();
         renderer.dispose();
+        console.log("Cleanup completed");
       };
-    }, 100);
+    };
 
-    return () => clearTimeout(initTimer);
-  }, []);
+    let cleanup: (() => void) | undefined;
+    if (loaded) {
+      cleanup = initThreeJS();
+    }
+
+    const loadedWatcher = () => {
+      if (loaded && !cleanup) {
+        cleanup = initThreeJS();
+      }
+    };
+    loadedWatcher();
+
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [loaded]);
 
   useEffect(() => {
     if (menuOpen) {
