@@ -25,96 +25,90 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+  if (!canvasRef.current) return;
+  const canvas = canvasRef.current; // Narrowed to HTMLCanvasElement
 
-    // Delay THREE.js initialization slightly to prioritize critical rendering
-    const initTimer = setTimeout(() => {
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.z = 5;
+  const initTimer = setTimeout(() => {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 5;
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvasRef.current,
-        alpha: true,
-        antialias: true,
-      });
-      
-      // Set background color of renderer to match body
-      renderer.setClearColor(new THREE.Color("#03020d"), 1);
-      
-      // Update renderer sizing logic
-      const updateSize = () => {
-        if (!canvasRef.current) return;
-        const container = document.documentElement;
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit for performance
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-      };
-      
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      antialias: true,
+    });
+
+    renderer.setClearColor(new THREE.Color("#03020d"), 1);
+
+    const updateSize = () => {
+      if (!canvasRef.current) return;
+      const container = document.documentElement;
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+    };
+
+    updateSize();
+
+    const starGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.1,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const starVertices = [];
+    for (let i = 0; i < 10000; i++) {
+      const x = (Math.random() - 0.5) * 200;
+      const y = (Math.random() - 0.5) * 200;
+      const z = (Math.random() - 0.5) * 200;
+      starVertices.push(x, y, z);
+    }
+
+    starGeometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(starVertices, 3)
+    );
+    const stars = new THREE.Points(starGeometry, starsMaterial);
+    scene.add(stars);
+
+    let animationFrameId: number;
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      stars.rotation.y += 0.0001;
+      stars.rotation.x += 0.00005;
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    const handleResize = () => {
       updateSize();
+    };
 
-      const starGeometry = new THREE.BufferGeometry();
-      const starsMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.1,
-        blending: THREE.AdditiveBlending,
-      });
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    window.addEventListener("deviceorientation", handleResize);
 
-      const starVertices = [];
-      for (let i = 0; i < 10000; i++) {
-        const x = (Math.random() - 0.5) * 200;
-        const y = (Math.random() - 0.5) * 200;
-        const z = (Math.random() - 0.5) * 200;
-        starVertices.push(x, y, z);
-      }
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+      window.removeEventListener("deviceorientation", handleResize);
+      cancelAnimationFrame(animationFrameId);
+      starGeometry.dispose();
+      starsMaterial.dispose();
+      renderer.dispose();
+    };
+  }, 100);
 
-      starGeometry.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(starVertices, 3)
-      );
-      const stars = new THREE.Points(starGeometry, starsMaterial);
-      scene.add(stars);
-
-      let animationFrameId: number;
-      const animate = () => {
-        animationFrameId = requestAnimationFrame(animate);
-        stars.rotation.y += 0.0001;
-        stars.rotation.x += 0.00005;
-        renderer.render(scene, camera);
-      };
-      animate();
-
-      const handleResize = () => {
-        updateSize();
-      };
-      
-      // Handle both resize and orientation change
-      window.addEventListener("resize", handleResize);
-      window.addEventListener("orientationchange", handleResize);
-      
-      // Add explicit device pixel ratio change handler for mobile
-      window.addEventListener("deviceorientation", handleResize);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        window.removeEventListener("orientationchange", handleResize);
-        window.removeEventListener("deviceorientation", handleResize);
-        cancelAnimationFrame(animationFrameId);
-        // Clean up THREE.js resources
-        starGeometry.dispose();
-        starsMaterial.dispose();
-        renderer.dispose();
-      };
-    }, 100); // Small delay to prioritize critical rendering
-
-    return () => clearTimeout(initTimer);
-  }, []);
+  return () => clearTimeout(initTimer);
+}, []);
 
   useEffect(() => {
     if (menuOpen) {
