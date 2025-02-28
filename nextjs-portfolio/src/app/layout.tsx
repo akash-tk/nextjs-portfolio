@@ -7,77 +7,113 @@ import * as THREE from "three";
 export default function Layout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  // Prevent flash by controlling visibility
+  useEffect(() => {
+    // Set loaded state after initial render
+    setLoaded(true);
+    
+    // Apply dark background to html element immediately
+    document.documentElement.style.backgroundColor = "#03020d";
+    document.body.style.backgroundColor = "#03020d";
+    
+    // Force dark mode at browser level if supported
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.z = 5;
+    // Delay THREE.js initialization slightly to prioritize critical rendering
+    const initTimer = setTimeout(() => {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvasRef.current,
-      alpha: true,
-      antialias: true,
-    });
-    
-    // Update renderer sizing logic
-    const updateSize = () => {
-      const container = document.documentElement;
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-    };
-    
-    updateSize();
-
-    const starGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.1,
-      blending: THREE.AdditiveBlending,
-    });
-
-    const starVertices = [];
-    for (let i = 0; i < 10000; i++) {
-      const x = (Math.random() - 0.5) * 200;
-      const y = (Math.random() - 0.5) * 200;
-      const z = (Math.random() - 0.5) * 200;
-      starVertices.push(x, y, z);
-    }
-
-    starGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(starVertices, 3)
-    );
-    const stars = new THREE.Points(starGeometry, starsMaterial);
-    scene.add(stars);
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      stars.rotation.y += 0.0001;
-      stars.rotation.x += 0.00005;
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    const handleResize = () => {
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvasRef.current,
+        alpha: true,
+        antialias: true,
+      });
+      
+      // Set background color of renderer to match body
+      renderer.setClearColor(new THREE.Color("#03020d"), 1);
+      
+      // Update renderer sizing logic
+      const updateSize = () => {
+        if (!canvasRef.current) return;
+        const container = document.documentElement;
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit for performance
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+      };
+      
       updateSize();
-    };
-    
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-    };
+      const starGeometry = new THREE.BufferGeometry();
+      const starsMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.1,
+        blending: THREE.AdditiveBlending,
+      });
+
+      const starVertices = [];
+      for (let i = 0; i < 10000; i++) {
+        const x = (Math.random() - 0.5) * 200;
+        const y = (Math.random() - 0.5) * 200;
+        const z = (Math.random() - 0.5) * 200;
+        starVertices.push(x, y, z);
+      }
+
+      starGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(starVertices, 3)
+      );
+      const stars = new THREE.Points(starGeometry, starsMaterial);
+      scene.add(stars);
+
+      let animationFrameId: number;
+      const animate = () => {
+        animationFrameId = requestAnimationFrame(animate);
+        stars.rotation.y += 0.0001;
+        stars.rotation.x += 0.00005;
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      const handleResize = () => {
+        updateSize();
+      };
+      
+      // Handle both resize and orientation change
+      window.addEventListener("resize", handleResize);
+      window.addEventListener("orientationchange", handleResize);
+      
+      // Add explicit device pixel ratio change handler for mobile
+      window.addEventListener("deviceorientation", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("orientationchange", handleResize);
+        window.removeEventListener("deviceorientation", handleResize);
+        cancelAnimationFrame(animationFrameId);
+        // Clean up THREE.js resources
+        starGeometry.dispose();
+        starsMaterial.dispose();
+        renderer.dispose();
+      };
+    }, 100); // Small delay to prioritize critical rendering
+
+    return () => clearTimeout(initTimer);
   }, []);
 
   useEffect(() => {
@@ -94,16 +130,28 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className="dark">
-
-{/*       <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#0c0d14] via-[#0a0a0f] to-[#0d0e14]"> */}
-
+      <head>
+        <style>{`
+          html, body {
+            background-color: #03020d !important;
+          }
+          
+          /* Apply smooth transitions to body background */
+          body {
+            transition: background-color 0.3s ease;
+          }
+          
+          /* Critical CSS to prevent flashing */
+          .bg-init {
+            background-color: #03020d;
+            color: #e2e8f0;
+            min-height: 100vh;
+            width: 100%;
+          }
+        `}</style>
+      </head>
       
-      <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#03020d] via-[#120f22] to-[#0d0d14]">
-
-{/*       <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#1e1e2f] via-[#2a2a47] to-[#1c1c3c]"> */}
-        
-
-{/*       <body className="relative min-h-screen w-full overflow-x-hidden bg-[#0f172a]"> */}
+      <body className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-r from-[#03020d] via-[#120f22] to-[#0d0d14] bg-init">
         <canvas
           ref={canvasRef}
           className="fixed inset-0 w-full h-full pointer-events-none"
@@ -115,6 +163,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             height: '100%',
             zIndex: -1,
             backgroundColor: '#03020d',
+            visibility: loaded ? 'visible' : 'hidden', // Hide canvas until loaded
           }}
         />
 
