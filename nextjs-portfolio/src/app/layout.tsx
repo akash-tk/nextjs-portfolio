@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
   if (!canvasRef.current) return;
-  const canvas = canvasRef.current; // Narrowed to HTMLCanvasElement
+  const canvas = canvasRef.current;
 
   const initTimer = setTimeout(() => {
     const scene = new THREE.Scene();
@@ -43,18 +43,16 @@ export default function Layout({ children }: { children: ReactNode }) {
       alpha: true,
       antialias: true,
     });
-
     renderer.setClearColor(new THREE.Color("#03020d"), 1);
 
+    // Ensure proper sizing
     const updateSize = () => {
       if (!canvasRef.current) return;
-      const container = document.documentElement;
-      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setSize(window.innerWidth, window.innerHeight); // Use window dimensions directly
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
     };
-
     updateSize();
 
     const starGeometry = new THREE.BufferGeometry();
@@ -88,10 +86,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     };
     animate();
 
-    const handleResize = () => {
-      updateSize();
-    };
-
+    const handleResize = () => updateSize();
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleResize);
     window.addEventListener("deviceorientation", handleResize);
