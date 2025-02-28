@@ -245,22 +245,22 @@ export default function Page() {
 
   // Preload critical images
   useEffect(() => {
-    const preloadImages = () => {
-      projects.forEach(project => {
-        const img = new Image();
-        img.src = project.image;
-      });
-      
-      certifications.forEach(cert => {
-        const img = new Image();
-        img.src = cert.image;
-      });
-    };
+  const preloadImages = () => {
+    projects.forEach(project => {
+      const img = new window.Image();
+      img.src = project.image;
+    });
     
-    if (isPageLoaded) {
-      preloadImages();
-    }
-  }, [isPageLoaded]);
+    certifications.forEach(cert => {
+      const img = new window.Image();
+      img.src = cert.image;
+    });
+  };
+  
+  if (isPageLoaded) {
+    preloadImages();
+  }
+}, [isPageLoaded]);
 
   // If page is not loaded yet, return a placeholder with the same background
   if (!isPageLoaded) {
