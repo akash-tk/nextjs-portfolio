@@ -11,8 +11,13 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   // Prevent flash by controlling visibility
   useEffect(() => {
-    // Set loaded state after initial render
-    setLoaded(true);
+  document.documentElement.style.backgroundColor = "#03020d";
+  document.body.style.backgroundColor = "#03020d";
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+  }
+  setLoaded(true); // Ensure this runs
+}, []);
     
     // Apply dark background to html element immediately
     document.documentElement.style.backgroundColor = "#03020d";
