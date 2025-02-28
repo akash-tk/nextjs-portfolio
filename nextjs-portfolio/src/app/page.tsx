@@ -199,8 +199,24 @@ export default function Page() {
     certifications: false,
     contact: false,
   });
+  
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  // Page load effect
+  useEffect(() => {
+    // Fix for background color flash
+    document.documentElement.style.backgroundColor = "#03020d";
+    document.body.style.backgroundColor = "#03020d";
+    
+    // Mark page as loaded after a short delay
+    setTimeout(() => {
+      setIsPageLoaded(true);
+    }, 50);
+  }, []);
 
   useEffect(() => {
+    if (!isPageLoaded) return;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -212,15 +228,48 @@ export default function Page() {
           }
         });
       },
-      { threshold: 0.2 }
-      rootMargin: '50px 0px'
+      { 
+        threshold: 0.2,
+        rootMargin: '50px 0px' 
+      }
     );
 
     const sections = document.querySelectorAll(".section-fade");
     sections.forEach((section) => observer.observe(section));
 
-    return () => sections.forEach((section) => observer.unobserve(section));
-  }, []);
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+      observer.disconnect();
+    };
+  }, [isPageLoaded]);
+
+  // Preload critical images
+  useEffect(() => {
+    const preloadImages = () => {
+      projects.forEach(project => {
+        const img = new Image();
+        img.src = project.image;
+      });
+      
+      certifications.forEach(cert => {
+        const img = new Image();
+        img.src = cert.image;
+      });
+    };
+    
+    if (isPageLoaded) {
+      preloadImages();
+    }
+  }, [isPageLoaded]);
+
+  // If page is not loaded yet, return a placeholder with the same background
+  if (!isPageLoaded) {
+    return (
+      <div className="min-h-screen bg-[#03020d] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-blue-400 rounded-full border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <section className="space-y-20 text-white min-h-screen p-8">
@@ -262,6 +311,7 @@ export default function Page() {
                   width={500}
                   height={300}
                   className="object-contain"
+                  priority={index < 2} // Prioritize loading the first two images
                 />
               </div>
 
@@ -343,6 +393,7 @@ export default function Page() {
                   src={cert.image}
                   alt={cert.title}
                   className="w-full h-full object-contain rounded-lg"
+                  loading={index < 3 ? "eager" : "lazy"} // Only eagerly load the first few images
                 />
                 <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors duration-300 rounded-lg"></div>
               </div>
