@@ -1,14 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: "Inter", sans-serif;
-   background: #03020d;
-/*   background: linear-gradient(135deg, #1e293b, #0f172a); */
+/* Base document styles to prevent flash */
+:root {
+  color-scheme: dark;
+}
+
+/* Apply background color to root elements */
+html, body {
+  background-color: #03020d !important;
   color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* Pre-render critical base styles */
+@layer base {
+  html {
+    @apply bg-[#03020d];
+  }
+  
+  body {
+    font-family: "Inter", sans-serif;
+    background: #03020d;
+    background: linear-gradient(135deg, #03020d, #120f22, #0d0d14);
+    color: #e2e8f0;
+    @apply transition-colors duration-300;
+  }
+  
+  /* Ensure dark mode persists */
+  .dark {
+    color-scheme: dark;
+  }
 }
 
 .glassmorphism {
@@ -17,14 +41,47 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   font-family: "Playfair Display", serif;
 }
 
-/* In globals.css */
+/* Performance optimization for section animations */
 .section-fade {
   content-visibility: auto;
   contain-intrinsic-size: 0 500px;
+  will-change: opacity, transform;
+}
+
+/* Animation optimization */
+@layer utilities {
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+}
+
+/* Fix for background flash during page transitions */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: #03020d;
+  }
+}
+
+/* Ensures content remains visible during page transitions */
+.page-transition-wrapper {
+  min-height: 100vh;
+  background-color: #03020d;
+}
+
+/* Print styles to maintain dark theme when printing */
+@media print {
+  html, body {
+    background-color: #03020d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
