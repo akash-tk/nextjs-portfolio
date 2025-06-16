@@ -37,7 +37,7 @@ const TypewriterText: React.FC = () => {
     };
 
     typeWriter();
-  }, [wordIndex]); // If you still get warnings, disable this ESLint rule
+  }, [wordIndex]);
 
   return (
     <span className="text-blue-400">
