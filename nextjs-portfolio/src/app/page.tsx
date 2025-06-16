@@ -103,6 +103,23 @@ const projects = [
     github: "https://github.com/akash-tk/ecommerce_analytics_platform",
     image: "/images/ecom.jpg",
   },
+  {
+    title: "LangChain-Q-A",
+    description:
+      "A full-stack Q&A chatbot built with React and Django, powered by LangChain and Hugging Face’s Meta-Llama-3-8B-Instruct model.",
+    tools: [
+    "React",
+    "Django",
+    "Django REST Framework",
+    "LangChain",
+    "Meta-Llama-3-8B-Instruct",
+    "Hugging Face",
+    "Python",
+    "JavaScript"
+],
+    github: "https://github.com/akash-tk/LangChain-Q-A",
+    image: "/images/ecom.jpg",
+  },
 ];
 
 const certifications = [
