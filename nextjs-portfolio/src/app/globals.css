@@ -3,19 +3,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base document styles to prevent flash */
 :root {
   color-scheme: dark;
 }
 
-/* Apply background color to root elements */
 html, body {
   background-color: #03020d !important;
   color: #e2e8f0;
   min-height: 100vh;
 }
 
-/* Pre-render critical base styles */
 @layer base {
   html {
     @apply bg-[#03020d];
@@ -29,7 +26,6 @@ html, body {
     @apply transition-colors duration-300;
   }
   
-  /* Ensure dark mode persists */
   .dark {
     color-scheme: dark;
   }
@@ -45,14 +41,12 @@ h1, h2, h3 {
   font-family: "Playfair Display", serif;
 }
 
-/* Performance optimization for section animations */
 .section-fade {
   content-visibility: auto;
   contain-intrinsic-size: 0 500px;
   will-change: opacity, transform;
 }
 
-/* Animation optimization */
 @layer utilities {
   .animate-blink {
     animation: blink 1s step-end infinite;
@@ -64,20 +58,17 @@ h1, h2, h3 {
   }
 }
 
-/* Fix for background flash during page transitions */
 @media (prefers-color-scheme: dark) {
   html, body {
     background: #03020d;
   }
 }
 
-/* Ensures content remains visible during page transitions */
 .page-transition-wrapper {
   min-height: 100vh;
   background-color: #03020d;
 }
 
-/* Print styles to maintain dark theme when printing */
 @media print {
   html, body {
     background-color: #03020d !important;
