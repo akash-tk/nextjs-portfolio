@@ -59,6 +59,7 @@ const skills = {
     "JIRA",
     "Backlog/Nulab",
     "Swagger",
+    "LangChain",
   ],
 };
 
