@@ -220,13 +220,10 @@ export default function Page() {
   
   const [isPageLoaded, setIsPageLoaded] = useState(false);
 
-  // Page load effect
   useEffect(() => {
-    // Fix for background color flash
     document.documentElement.style.backgroundColor = "#03020d";
     document.body.style.backgroundColor = "#03020d";
     
-    // Mark page as loaded after a short delay
     setTimeout(() => {
       setIsPageLoaded(true);
     }, 50);
@@ -261,7 +258,6 @@ export default function Page() {
     };
   }, [isPageLoaded]);
 
-  // Preload critical images
   useEffect(() => {
   const preloadImages = () => {
     projects.forEach(project => {
@@ -280,7 +276,6 @@ export default function Page() {
   }
 }, [isPageLoaded]);
 
-  // If page is not loaded yet, return a placeholder with the same background
   if (!isPageLoaded) {
     return (
       <div className="min-h-screen bg-[#03020d] flex items-center justify-center">
@@ -329,7 +324,7 @@ export default function Page() {
                   width={500}
                   height={300}
                   className="object-contain"
-                  priority={index < 2} // Prioritize loading the first two images
+                  priority={index < 2}
                 />
               </div>
 
@@ -411,7 +406,7 @@ export default function Page() {
                   src={cert.image}
                   alt={cert.title}
                   className="w-full h-full object-contain rounded-lg"
-                  loading={index < 3 ? "eager" : "lazy"} // Only eagerly load the first few images
+                  loading={index < 3 ? "eager" : "lazy"}
                 />
                 <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors duration-300 rounded-lg"></div>
               </div>
