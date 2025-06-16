@@ -118,7 +118,7 @@ const projects = [
     "JavaScript"
 ],
     github: "https://github.com/akash-tk/LangChain-Q-A",
-    image: "/images/ecom.jpg",
+    image: "/images/LangChain-Q-A.png",
   },
 ];
 
